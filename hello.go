@@ -2,12 +2,20 @@ package main
 
 import (
 	"fmt"
-	"log"
+	"io/ioutil"
+	"net/http"
 )
 
+func sayHello(w http.ResponseWriter, r *http.Request) {
+	b, _ := ioutil.ReadFile("./hello")
+	_, _ = fmt.Fprintln(w, string(b))
+}
+
 func main() {
-	fmt.Println("test ...")
-	fmt.Println("this is a word ...")
-	log.Println("build a log ...")
-	fmt.Println("end")
+	http.HandleFunc("/hello", sayHello)
+	err := http.ListenAndServe(":9090", nil)
+	if err != nil {
+		fmt.Printf("http server handle failed:%v\n", err)
+		return
+	}
 }
